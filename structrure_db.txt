@@ -1,0 +1,78 @@
+//collection: members (anggota)
+{
+  "_id": ObjectId("1234567890abcdef"), 
+  "Name": "John Doe",
+  "Address": "123 Main St",
+  "PhoneNumber": "08123456789",
+  "JoinDate": "2024-02-01",
+  "Email": "john.doe@example.com",
+  "password": "hashed_password_here",
+  "refresh_token": "asdfjeiksdf34kjdf",
+  "is_verified": false,
+  "otp": {
+    "code": "123456",
+    "expires_at": "2024-02-01T12:00:00Z"
+  }
+}
+
+Mengecek apakah OTP cocok dan belum kedaluwarsa.
+Jika valid, server mengupdate is_verified: true.
+Menghapus field otp dari database.
+
+
+//collection: books 
+{
+  "_id": ObjectId("abcdef1234567890"),
+  "Title": "Learn MongoDB",
+  "synopsis" "loremipsum dolor sit amet loremte da punta adri",
+  "Author": "Jane Doe",
+  "Publisher": "Tech Publisher",
+  "PublishedYear": 2023,
+  "ISBN": "978-1234567890",
+  "AvailableCopies": 5,
+  "Categories": [
+    {
+      "CategoryID": ObjectId("catid123"),
+      "CategoryName": "Technology"
+    },
+    {
+      "CategoryID": ObjectId("catid456"),
+      "CategoryName": "Programming"
+    }
+  ]
+}
+
+
+//collection: loans (peminjaman)
+{
+  "_id": ObjectId("loanid123"),
+  "Member": {
+    "MemberID": ObjectId("1234567890abcdef"),
+    "Name": "John Doe",
+    "Email": "john.doe@example.com"
+  },
+  "Book": {
+    "BookID": ObjectId("abcdef1234567890"),
+    "Title": "Learn MongoDB",
+    "ISBN": "978-1234567890"
+  },
+  "LoanDate": "2024-02-01",
+  "ReturnDate": null,
+  "Status": "Borrowed",
+  "Staff": {
+    "StaffID": ObjectId("staffid123"),
+    "Name": "Library Admin"
+  }
+}
+
+
+//collection: staff (petugas)
+{
+  "_id": ObjectId("staffid123"),
+  "Name": "Library Admin",
+  "Roles": ["Admin", "Librarian"],  
+  "PhoneNumber": "08123456789",
+  "Email": "admin@example.com"
+  "password": "staff123",
+  "refresh_token": "asdfjeiksdf34kjdf"
+}
