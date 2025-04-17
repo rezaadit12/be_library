@@ -7,7 +7,7 @@ const  router = express.Router();
 router.get('/books', getAllBooks);
 router.get('/books/:id', getBookById);
 router.post('/books', uploadImage.single('image'),  createNewBook);
-router.patch('/books/:id', updateBook);
+router.patch('/books/:id', uploadImage.single('image'), updateBook);
 router.delete('/books/:id', deleteBook);
 
 export default router;

@@ -1,5 +1,11 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import M_books from '../Models/M_book.js';
 import { fetchAllDataSuccess, dataSuccessResponse, dataFailedResponse } from "../Utils/customResponse.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const getAllBooks = async (req, res) => {
     try {
@@ -33,6 +39,7 @@ export const createNewBook = async (req, res) => {
         }
 
         const imageUrl = image ? `/assets/images/${image.filename}` : null;
+        console.log(imageUrl)
         const book = new M_books({ 
             ...data, 
             image: imageUrl // Simpan URL gambar di database
@@ -50,11 +57,32 @@ export const updateBook = async (req, res) => {
         return res.status(400).json(dataFailedResponse('Data to update can not be empty!'));
     }
     const { id } = req.params;
+    const image = req.file;
     try {
-        const book = await M_books.updateOne({_id:id}, {$set: req.body});
-        if(!book){
+        const bookData = await M_books.findById(id);
+        if(!bookData){
             return res.status(400).json(dataFailedResponse('book not found'));
         }
+        
+        // ini digunakan untuk menghapus file gambar yang lama, dan menggantinya dengan yang baru
+        if(image){
+            if(bookData.image){
+                const fileName = path.basename(bookData.image);
+                const oldImage = path.join(__dirname, '..', '..', 'public', 'images', fileName);
+   
+                if(fs.existsSync(oldImage)){
+                    fs.unlinkSync(oldImage);
+                }
+            }
+            req.body.image = `/assets/images/${image.filename}`;
+        }
+
+        await M_books.updateOne({_id:id}, {$set: req.body});
+
+        // if(book.modifiedCount == 0){
+        //     return res.status(400).json(dataFailedResponse('No changes were made')); 
+        // }
+
         return res.status(200).json(dataSuccessResponse("book updated successfully", req.body))
     } catch (error) {
         return res.status(500).json(dataFailedResponse(error.message));
@@ -64,15 +92,26 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
     const { id } = req.params;
     try {
-        const deleteBook = await M_books.deleteOne({_id:id});
-        if(deleteBook.deletedCount === 0){
+        const bookData = await M_books.findById(id);
+        if(!bookData){
             return res.status(400).json(dataFailedResponse('book not found'));
         }
+
+        if(bookData.image){
+            const fileName = path.basename(bookData.image);
+            const oldImage = path.join(__dirname, '..', '..', 'public', 'images', fileName);
+
+            if(fs.existsSync(oldImage)){
+                fs.unlinkSync(oldImage);
+            }
+        }
+
+        const deleteBook = await M_books.deleteOne({_id:id});
+
         return res.status(200).json(dataSuccessResponse("book deleted successfully", deleteBook))
     } catch (error) {
         return res.status(500).json(dataFailedResponse(error.message));
     }
 }
-
 
 
