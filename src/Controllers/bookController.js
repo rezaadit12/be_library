@@ -19,7 +19,7 @@ export const getAllBooks = async (req, res) => {
 export const getBookById = async (req, res) => {
     const { id } = req.params;
     try {
-        const book = await M_books.findById(id);
+        const book = await M_books.exists({_id: id});
         if(!book){
             return res.status(404).json(dataFailedResponse('book not found!'));
         }
@@ -59,7 +59,7 @@ export const updateBook = async (req, res) => {
     const { id } = req.params;
     const image = req.file;
     try {
-        const bookData = await M_books.findById(id);
+        const bookData = await M_books.exists({_id: id});
         if(!bookData){
             return res.status(400).json(dataFailedResponse('book not found'));
         }
@@ -83,7 +83,7 @@ export const updateBook = async (req, res) => {
         //     return res.status(400).json(dataFailedResponse('No changes were made')); 
         // }
 
-        return res.status(200).json(dataSuccessResponse("book updated successfully", req.body))
+        return res.status(200).json(dataSuccessResponse("book updated successfully", req.body));
     } catch (error) {
         return res.status(500).json(dataFailedResponse(error.message));
     }
@@ -92,7 +92,7 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
     const { id } = req.params;
     try {
-        const bookData = await M_books.findById(id);
+        const bookData = await M_books.exists({_id: id});
         if(!bookData){
             return res.status(400).json(dataFailedResponse('book not found'));
         }

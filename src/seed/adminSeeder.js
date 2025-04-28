@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import M_staff from "../Models/M_staff.js";
 
 const seedAdmin = async () => {
@@ -10,11 +9,11 @@ const seedAdmin = async () => {
         return;
     }
 
-    const hashedPassword = await bcrypt.hash("Adminku242411!", 10);
+    const hashedPassword = await argon2.hash("Adminku242411!");
 
     const admin = new M_staff({
         username: "Super Admin",
-        roles: ["Admin"],
+        role: "Admin",
         email: "superadmin@admin.com",
         phoneNumber: "087865434543",
         password: hashedPassword,

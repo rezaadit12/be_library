@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from 'cookie-parser';
 import bookRoute from "./Routes/bookRoute.js";
+import staffRoute from "./Routes/staffRoute.js";
+import authRoute from "./Routes/authRoute.js";
 import logRequest from "./Middleware/logsInfo.js";
 // import multer from "multer";
 
@@ -20,9 +23,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());   
 app.use(logRequest);
+app.use(cookieParser());
 
 // Routes
+app.use(authRoute);
 app.use(bookRoute);
+app.use(staffRoute);
 
 app.use('/assets/images',express.static('public/images')); // yang diakses oleh url eg: http://localhost:3000/asssets/images/nama_gambar
 

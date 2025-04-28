@@ -1,4 +1,4 @@
-//collection: members (anggota)
+//collection: members (anggota) // ini perlu register 
 {
   "_id": ObjectId("1234567890abcdef"), 
   "Name": "John Doe",
@@ -14,7 +14,6 @@
     "expires_at": "2024-02-01T12:00:00Z"
   }
 }
-
 Mengecek apakah OTP cocok dan belum kedaluwarsa.
 Jika valid, server mengupdate is_verified: true.
 Menghapus field otp dari database.
@@ -76,3 +75,5 @@ Menghapus field otp dari database.
   "password": "staff123",
   "refresh_token": "asdfjeiksdf34kjdf"
 }
+yang memilki akses untuk membuat akun admin adalah superadmin
+dan pembuat akun Librarian adalah admin (umum)

@@ -19,12 +19,12 @@ const staffSchema = new Mongoose({
 });
 
 const M_loans = new mongoose({
-    member: { type: memberSchema, required: true },
-    book: { type: bookSchema, required: true },
-    loanDate: { type: Date, required: true, default: Date.now },
+    member:     { type: memberSchema, required: true },
+    book:       { type: bookSchema, required: true },
+    loanDate:   { type: Date, required: true, default: Date.now },
     returnDate: Date,
-    status: { type: String, required: true },
-    staff: { type: staffSchema, required: true }
+    status:     { type: String, required: true },
+    staff:      { type: staffSchema, required: true }
 }, { timestamps: true });
 
 
