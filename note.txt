@@ -1,0 +1,2 @@
+1. get data buku yang sedang dipinjam
+2. get data buku tersedia

@@ -1,9 +1,10 @@
 import express from 'express';
-import { login, generateRefreshToken } from '../Controllers/authController.js';
+import { login, generateRefreshToken, logout } from '../Controllers/authController.js';
 
 const router = express.Router();
 
 router.post('/login', login);
-router.get('/token', generateRefreshToken)
+router.post('/token', generateRefreshToken);
+router.post('/logout', logout);
 
 export default router;

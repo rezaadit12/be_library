@@ -13,7 +13,7 @@ const seedAdmin = async () => {
 
     const admin = new M_staff({
         username: "Super Admin",
-        role: "Admin",
+        role: "admin",
         email: "superadmin@admin.com",
         phoneNumber: "087865434543",
         password: hashedPassword,

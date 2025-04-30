@@ -14,7 +14,7 @@ export const getAllStaff = async (req, res) => {
 export const getStaffById = async (req, res) => {
     const { id } = req.params;
     try {
-        const staff = await M_staff.exists({_id: id});
+        const staff = await M_staff.findOne({_id: id});
         if(!staff){
             return res.status(404).json(dataFailedResponse('staff not found!'))
         }

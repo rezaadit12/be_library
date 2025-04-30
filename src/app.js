@@ -2,10 +2,13 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
+import logRequest from "./Middleware/logsInfo.js";
+
 import bookRoute from "./Routes/bookRoute.js";
 import staffRoute from "./Routes/staffRoute.js";
 import authRoute from "./Routes/authRoute.js";
-import logRequest from "./Middleware/logsInfo.js";
+import memberRoute from "./Routes/memberRoute.js";
+import loanRoute from "./Routes/loanRoute.js";
 // import multer from "multer";
 
 /**
@@ -29,6 +32,8 @@ app.use(cookieParser());
 app.use(authRoute);
 app.use(bookRoute);
 app.use(staffRoute);
+app.use(memberRoute);
+app.use(loanRoute);
 
 app.use('/assets/images',express.static('public/images')); // yang diakses oleh url eg: http://localhost:3000/asssets/images/nama_gambar
 

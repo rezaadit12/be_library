@@ -7,12 +7,12 @@ const M_members = new Schema({
     phone_number: String,
     email:          { type: String, required: true, unique: true },
     password:       { type: String, requried: true },
-    joinDate:       { type: Date, requried: true },
-    refreshToken:   { type: String, required: true },
-    isVerified:     { type: String, requried: true },
+    joinDate:       { type: Date, default: null},
+    refreshToken:   { type: String, default: null },
+    isVerified:     { type: Boolean, requried: true },
     otp: {
-        code:       { type: Number, requried: true },
-        expiresAt:  { type: Date, requried: true }
+        code:       String,
+        expiresAt:  { type: Date}
     }
 
 }, { timestamps: true });

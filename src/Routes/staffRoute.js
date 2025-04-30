@@ -7,7 +7,8 @@ const  router = express.Router();
 
 router.get('/staff', getAllStaff);
 router.get('/staff/:id', getStaffById);
-router.post('/staff', verifyToken, authorizeRole("Admin"), createNewStaff);
+router.post('/staff', createNewStaff);
+// router.post('/staff', verifyToken, authorizeRole("Admin"), createNewStaff);
 router.patch('/staff/:id', updateStaff);
 router.delete('/staff/:id', deleteStaff);
 

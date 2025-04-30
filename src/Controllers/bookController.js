@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export const getAllBooks = async (req, res) => {
     try {
+        
         const books = await M_books.find();
         return res.json(fetchAllDataSuccess('Get books successfully', books.length, books));
     } catch (error) {
@@ -19,7 +20,7 @@ export const getAllBooks = async (req, res) => {
 export const getBookById = async (req, res) => {
     const { id } = req.params;
     try {
-        const book = await M_books.exists({_id: id});
+        const book = await M_books.findOne({_id: id});
         if(!book){
             return res.status(404).json(dataFailedResponse('book not found!'));
         }
@@ -39,7 +40,6 @@ export const createNewBook = async (req, res) => {
         }
 
         const imageUrl = image ? `/assets/images/${image.filename}` : null;
-        console.log(imageUrl)
         const book = new M_books({ 
             ...data, 
             image: imageUrl // Simpan URL gambar di database

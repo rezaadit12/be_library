@@ -4,30 +4,13 @@ import M_staff from "../Models/M_staff.js";
 import M_members from "../Models/M_member.js";
 import { dataFailedResponse } from "../Utils/customResponse.js";
 
-
-// export const register = (Model) => async (req, res) => {
-//     const { name, email, password, confPassword } = req.body;
-
-//     if(password !== confPassword) return res.status(400).json({message: 'Password does not match!'});
-
-//     const hashPassword = await argon2.hash(password);
-//     try {
-//         await Model.create({
-
-//         });
-//     } catch (error) {
-        
-//     }
-
-// }
-
 export const login = async (req, res) => {
     try{
         let user = await M_staff.findOne({ email: req.body.email });
         let typeModel = "staff";
 
         if(!user){
-            user = await M_members.findOne({ email: req.body.email });
+            user = await M_members.findOne({ email: req.body.email, isVerified: true });
             typeModel = 'member';
         }
 
@@ -62,35 +45,78 @@ export const login = async (req, res) => {
 
         res.json({ accessToken, user});
     }catch(error){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json(dataFailedResponse(error.message));
     }
 }
 
-export const generateRefreshToken = async(req, res) => {
+export const generateRefreshToken = async (req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+
+        // Jika refresh token tidak ada
+        if (!refreshToken) return res.status(401).json({ message: 'Refresh token is missing' });
+
+        // Cari user berdasarkan refresh token
+        let user = await M_members.findOne({ refreshToken });
+        if (!user) {
+            user = await M_staff.findOne({ refreshToken });
+        }
+
+        // Jika user tidak ditemukan
+        if (!user) return res.status(401).json({ message: 'User not found' });
+
+        // Verifikasi refresh token
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                // Jika token tidak valid
+                return res.status(403).json({ message: 'Invalid refresh token' });
+            }
+
+            // Ambil data user yang sudah didekode
+            const { _id, name, email, role } = user;
+
+            // Generate access token baru
+            const accessToken = jwt.sign(
+                { userId: _id, name, email, role },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '15m' }
+            );
+
+            // Kirim access token ke client
+            res.status(200).json({ accessToken });
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const logout = async(req, res) => {
     try{
         const refreshToken = req.cookies.refreshToken;
         if(!refreshToken) return res.sendStatus(401);
-        
 
-        let user = await M_members.findOne({refreshToken: refreshToken });
-        if(!user){
-            user = await M_staff.findOne({refreshToken: refreshToken });
+        let user = await M_staff.findOne({ refreshToken: refreshToken });
+        let typeModel = "staff";
+
+        if(!user) {
+            user = await M_members.findOne({ refreshToken: refreshToken });
+            typeModel = "member";
         }
 
-        if(!user) return res.sendStatus(403);
+        if(!user) return res.sendStatus(204);
 
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-            if(err) return res.sendStatus(403);
 
-            const  {_id, name, email, role } = user;
-            const accessToken = jwt.sign({ userId: _id, name, email, role }, process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '15m'}
-            );
-            res.json({ accessToken })
-        });
+        if(typeModel == 'staff') {
+            await M_staff.updateOne({refreshToken: null});
+        }else{
+            await M_members.updateOne({refreshToken: null});
+        }
+        res.clearCookie('refreshToken');
+        return res.status(200).json({success: true, message: 'logout successfully'});
     }catch(error){
         console.log(error);
-        res.sendStatus(500);
+        return res.status(500).json(dataFailedResponse(error.message));
     }
 }
